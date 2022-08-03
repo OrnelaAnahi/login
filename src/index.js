@@ -34,7 +34,7 @@ if (MODO === 'FORK') {
       secure: false,
       maxAge: 600000
     },
-    store: MongoStore.create({ mongoUrl: "mongodb+srv://user_coder:42856227@cluster0.b8idn.mongodb.net/sessionMongo?retryWrites=true&w=majority" })
+    store: MongoStore.create({ mongoUrl: "mongodb+srv://user_coder:*****@cluster0.b8idn.mongodb.net/sessionMongo?retryWrites=true&w=majority" })
   }))
 
   app.use(passport.initialize())
@@ -88,7 +88,7 @@ else if (MODO === 'CLUSTER') {
         secure: false,
         maxAge: 600000
       },
-      store: MongoStore.create({ mongoUrl: "mongodb+srv://user_coder:42856227@cluster0.b8idn.mongodb.net/sessionMongo?retryWrites=true&w=majority" })
+      store: MongoStore.create({ mongoUrl: "mongodb+srv://user_coder:*******@cluster0.b8idn.mongodb.net/sessionMongo?retryWrites=true&w=majority" })
     }))
 
     app.use(passport.initialize())
