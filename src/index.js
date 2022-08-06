@@ -5,17 +5,37 @@ import passport from 'passport'
 import inicio from './routes/inicio.js'
 import './db/databaseMongo.js'
 import './passport/local.js'
-import info from './routes/info.js'
 import minimist from 'minimist'
 import cluster from 'cluster'
+import os from 'os'
+import info from './routes/info.js'
+import log4js from 'log4js'
+
+// LOGGER
+
+log4js.configure({
+  appenders: {
+    miLoggerConsole: { type: "console" },
+    miWarnFile: { type: "file", filename: "warn.log" },
+    warnFileLevel: { type: 'logLevelFilter', appender: 'miWarnFile', level: 'warn' },
+  },
+  categories: {
+    default: { appenders: ["miLoggerConsole"], level: "info" },
+    logs: { appenders: ["warnFileLevel", "miLoggerConsole"], level: "all" },
+  },
+})
+const loggerConsole = log4js.getLogger()
+const loggerFiles = log4js.getLogger('logs')
+
+
+
+
 
 const options = { default: { port: 3000, modo: 'FORK' } }
 const args = minimist(process.argv.slice(2), options)
 console.log(args)
 const PORT = args.port
 const MODO = args.modo
-const numCPUs = os.cpus().length
-
 
 const app = express()
 
@@ -43,20 +63,6 @@ if (MODO === 'FORK') {
   app.use('/', inicio)
 
   app.use('/info', info)
-
-
-  app.get('/info', (req, res) => {
-    res.send({
-      'argumentos de entrada': process.argv,
-      'sistema operativo': process.platform,
-      'version de node': process.version,
-      'memoria total reservada': process.rss,
-      'path de ejecucion': process.execPath,
-      'process id': process.pid,
-      'carpeta del proyecto': process.cwd(),
-      'numero de procesadores': numCPUs
-    })
-  })
 
 
   app.listen(PORT, () => {
@@ -98,20 +104,30 @@ else if (MODO === 'CLUSTER') {
 
     app.use('/info', info)
 
-
-    app.get('/info', (req, res) => {
-      res.send({
-        'argumentos de entrada': process.argv,
-        'sistema operativo': process.platform,
-        'version de node': process.version,
-        'memoria total reservada': process.rss,
-        'path de ejecucion': process.execPath,
-        'process id': process.pid,
-        'carpeta del proyecto': process.cwd(),
-        'numero de procesadores': numCPUs
-      })
+    app.use((req, res, next) => {
+      loggerConsole.info(`RUTA ${req.url} METODO ${req.method} RECIBIDO`)
+      next()
     })
 
+    app.get('*', (req, res) => {
+      loggerFiles.warn(`RUTA ${req.url} METODO ${req.method} INVALID`)
+      res.send({ warning: `RUTA ${req.url} METODO ${req.method} INVALID` })
+    })
+
+    app.post('*', (req, res) => {
+      loggerFiles.warn(`RUTA ${req.url} METODO ${req.method} INVALID`)
+      res.send({ warning: `RUTA ${req.url} METODO ${req.method} INVALID` })
+    })
+
+    app.put('*', (req, res) => {
+      loggerFiles.warn(`RUTA ${req.url} METODO ${req.method} INVALID`)
+      res.send({ warning: `RUTA ${req.url} METODO ${req.method} INVALID` })
+    })
+
+    app.delete('*', (req, res) => {
+      loggerFiles.warn(`RUTA ${req.url} METODO ${req.method} INVALID`)
+      res.send({ warning: `RUTA ${req.url} METODO ${req.method} INVALID` })
+    })
 
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en el puerto ${PORT}`)
