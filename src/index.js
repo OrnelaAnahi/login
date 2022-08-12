@@ -34,7 +34,7 @@ const loggerFiles = log4js.getLogger('logs')
 const options = { default: { port: 3000, modo: 'FORK' } }
 const args = minimist(process.argv.slice(2), options)
 console.log(args)
-const PORT = args.port
+const PORT = process.env.PORT || args.port
 const MODO = args.modo
 
 const app = express()
