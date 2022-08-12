@@ -11,6 +11,12 @@ import os from 'os'
 import info from './routes/info.js'
 import log4js from 'log4js'
 
+
+// HEROKU
+console.log('Hola heroku')
+
+
+
 // LOGGER
 
 log4js.configure({
