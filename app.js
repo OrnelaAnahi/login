@@ -13,8 +13,7 @@ const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 import ('./src/utils/passport/local.js')
 import passport from 'passport'
 
-app.use(passport.initialize())
-app.use(passport.session())
+
 
 // ARCHIVOS ESTATICOS
 import { fileURLToPath } from "url";
@@ -52,6 +51,9 @@ app.use(
 // Logueo rutas
 import logeoRutas from './src/middleware/logeo-rutas.js'
 
+// PASSPORT
+app.use(passport.initialize())
+app.use(passport.session())
 
 // ROUTES
 import inicio from './src/routes/inicio.js'
