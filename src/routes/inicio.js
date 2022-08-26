@@ -1,46 +1,21 @@
 import { Router } from "express"
-import passport from "passport"
-
+import {getRegistro, postRegistro, getLogin, postLogin, getInfo, errorLogin, errorRegistro} from '../controllers/inicio.js'
 const router = Router()
+import auth from '../middleware/auth.js'
 
-function isAuth(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-  res.redirect('/login')
-}
+router.get('/', getRegistro)
 
-router.get('/', (req, res) => {
-  res.render('registro')
-})
-
-router.get('/registro', (req, res) => {
-  res.render('registro')
-})
-router.post('/registro', passport.authenticate('registro', {
-  failureRedirect: '/errorRegistro',
-  successRedirect: '/info'
-}))
+router.get('/registro', getRegistro)
+router.post('/registro', postRegistro)
 
 
-router.get('/login', (req, res) => {
-  res.render('login')
-})
-router.post('/login', passport.authenticate('login', {
-  failureRedirect: '/errorLogin',
-  successRedirect: '/info'
-}))
+router.get('/login', getLogin)
+router.post('/login', postLogin)
 
-router.get('/info', isAuth, (req, res) => {
-  res.render('info', { nombre: req.user.nombre })
-})
+router.get('/info', auth, getInfo)
 
-router.get('/errorLogin', (req, res) => {
-  res.render('errorLogin')
-})
-router.get('/errorRegistro', (req, res) => {
-  res.render('errorRegistro')
-})
+router.get('/errorLogin', errorLogin)
+router.get('/errorRegistro',errorRegistro)
 
 
 export default router
