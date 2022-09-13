@@ -1,39 +1,36 @@
-import passport from "passport"
+ import passport from "passport"
 import { Strategy } from "passport-local"
-import Usuarios from "../../db/models/usuarios.js"
+import {usuarioDao as Usuarios} from "../../db/index.js"
 
 const LocalStrategy = Strategy
 
 passport.use('registro', new LocalStrategy(
   { usernameField: 'email', passwordField: 'password', passReqToCallback: true },
   async (req, email, password, done) => {
-    const usuarioFind = await Usuarios.findOne({ email })
-    if (usuarioFind) {
-      return done(null, false)
-    } else {
-      const usuario = new Usuarios()
-      usuario.nombre = req.body.nombre
-      usuario.email = email
-      usuario.password = usuario.encriptar(password)
-      await usuario.save()
-      return done(null, usuario)
+    const usuarioBD = await Usuarios.mostrar(user)
+    if (usuarioBD) {
+      return done(null, false);
     }
+    const usuarioNuevo = await Usuarios.guardar({
+      email: email,
+      password: Usuarios.encriptar(password),
+    })
+    done(null, usuarioNuevo);
   }
 ))
 
 passport.use('login', new LocalStrategy(
   { usernameField: 'email', passwordField: 'password', passReqToCallback: true },
   async (req, email, password, done) => {
-    const usuarioFind = await Usuarios.findOne({ email })
-    if (usuarioFind) {
-      if (usuarioFind.password === password) {
-        return done(null, usuarioFind)
-      } else {
-        return done(null, false)
+    const user = { email: email }
+      const usuarioBD = await Usuarios.mostrar(user);
+      if (!usuarioBD) {
+        return done(null, false);
       }
-    } else {
-      return done(null, false)
-    }
+      if (!Usuarios.comparar(usuarioBD.password, password)) {
+        return done(null, false);
+      }
+      return done(null, usuarioBD)
   }
 ))
 

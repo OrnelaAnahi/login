@@ -6,7 +6,7 @@ import compression from "compression"
 app.use(compression())
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
-import './src/db/databaseMongo.js'
+// import './src/db/databaseMongo.js'
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 
 // PASSPORT
